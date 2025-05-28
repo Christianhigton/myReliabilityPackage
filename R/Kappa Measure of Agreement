@@ -1,0 +1,24 @@
+#' Report Cohen's Kappa
+#'
+#' @param ratings Matrix/data frame with two columns (rater1 and rater2).
+#' @param digits Number of decimal places.
+#' @return Character string APA-style report.
+report_kappa <- function(ratings, digits = 2) {
+  if (!requireNamespace("psych", quietly = TRUE)) stop("Install psych package for cohen.kappa.")
+  res <- psych::cohen.kappa(ratings)
+  kappa_val <- round(res$kappa, digits)
+  z_val <- round(res$z, digits)
+  p_val <- format.pval(res$p, digits = 3)
+  interpret <- ifelse(kappa_val < 0.20, "slight",
+               ifelse(kappa_val < 0.40, "fair",
+               ifelse(kappa_val < 0.60, "moderate",
+               ifelse(kappa_val < 0.80, "substantial", "almost perfect"))))
+  txt <- sprintf(
+    "Cohen's Kappa was used to assess inter-rater agreement between two raters. The agreement was %s, κ = %.2f, z = %.2f, p = %s.",
+    interpret,
+    kappa_val,
+    z_val,
+    p_val
+  )
+  return(txt)
+}
