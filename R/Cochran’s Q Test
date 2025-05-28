@@ -1,0 +1,19 @@
+#' Report Cochran's Q Test
+#'
+#' @param data Matrix or data frame with binary responses (subjects x conditions).
+#' @param digits Number of decimal places.
+#' @return Character string APA-style report.
+report_cochran_q <- function(data, digits = 2) {
+  if (!requireNamespace("DescTools", quietly = TRUE)) stop("Install DescTools package for CochranQTest.")
+  res <- DescTools::CochranQTest(data)
+  txt <- sprintf(
+    "A Cochran’s Q test was conducted to examine differences in positive response rates across %d conditions. The test was %s statistically significant, Q(%d, N = %d) = %.2f, p = %.3f.",
+    ncol(data),
+    ifelse(res$p.value < 0.05, "", "not"),
+    res$parameter,
+    nrow(data),
+    res$statistic,
+    res$p.value
+  )
+  return(txt)
+}
