@@ -1,0 +1,20 @@
+#' Report McNemar's Test
+#'
+#' @param table 2x2 contingency table.
+#' @param continuity_correction Logical, use continuity correction.
+#' @param digits Number of decimal places.
+#' @return Character string APA-style report.
+report_mcnemar <- function(table, continuity_correction = TRUE, digits = 2) {
+  res <- mcnemar.test(table, correct = continuity_correction)
+  n <- sum(table)
+  txt <- sprintf(
+    "A %sMcNemar’s test was conducted to examine the change in [binary outcome] between [two conditions/time points]. The analysis revealed that the difference was %s statistically significant, χ²(%d, N = %d) = %.2f, p = %.3f.",
+    ifelse(continuity_correction, "continuity-corrected ", ""),
+    ifelse(res$p.value < 0.05, "", "not"),
+    res$parameter,
+    n,
+    res$statistic,
+    res$p.value
+  )
+  return(txt)
+}
