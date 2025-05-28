@@ -1,0 +1,23 @@
+#' Report Chi-Square Goodness of Fit
+#'
+#' @param observed Numeric vector of observed frequencies.
+#' @param expected Numeric vector of expected frequencies or proportions.
+#' @param sample_size Total sample size (optional, inferred if missing).
+#' @param digits Number of decimal places for reporting.
+#' @return Character string APA-style report.
+report_chi_sq_gof <- function(observed, expected, sample_size = NULL, digits = 2) {
+  chisq_res <- chisq.test(x = observed, p = expected/sum(expected))
+  n <- if (is.null(sample_size)) sum(observed) else sample_size
+  prop <- round(observed[1] / n * 100, digits)
+  txt <- sprintf(
+    "A Chi-Square Goodness of Fit test indicates there was %s significant difference in the proportion of smokers identified in the current sample (%.1f%%) as compared with the value of %.1f%% that was obtained in a previous nationwide study, χ²(%d, n = %d) = %.2f, p = %.3f.",
+    ifelse(chisq_res$p.value < 0.05, "", "no"),
+    prop,
+    expected[1] / sum(expected) * 100,
+    chisq_res$parameter,
+    n,
+    chisq_res$statistic,
+    chisq_res$p.value
+  )
+  return(txt)
+}
